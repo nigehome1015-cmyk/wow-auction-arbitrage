@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>拍賣套利分析器</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#131b2e;--panel2:#18233a;--line:#293752;--text:#edf3ff;--muted:#9eacc4;--gold:#f4c66a;--blue:#78b7ff;--red:#ff8e91;--green:#8ee0b2}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -10%,#1c3153 0,transparent 50%),var(--bg);color:var(--text);font:15px/1.5 system-ui,"Microsoft JhengHei",sans-serif}
+    .wrap{max-width:1240px;margin:auto;padding:34px 22px 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:14px}.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#f7d578,#c5863c);color:#281a08;font-weight:900;font-size:22px;box-shadow:0 8px 24px #c5863c33}h1{font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:.2px}.sub{margin:3px 0 0;color:var(--muted)}.badge{border:1px solid #384b68;border-radius:999px;padding:8px 13px;color:#c4d3e9;font-size:13px;white-space:nowrap}
+    .card{background:linear-gradient(180deg,#151e32,#11192a);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 45px #0002}.inputs{display:grid;grid-template-columns:1fr 1fr;gap:16px}.faction{padding:12px;border-radius:14px;border:1px solid transparent}.faction-horde{background:rgba(155,35,53,.16);border-color:rgba(255,100,115,.4)}.field-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.field-head label{font-weight:700;font-size:16px}.hint{font-size:12px;color:var(--muted)}.faction-horde .field-head label{color:#ffb1b7}.faction-horde .hint{color:#dda3aa}textarea{width:100%;min-height:208px;resize:vertical;background:#0d1525;border:1px solid #30415f;border-radius:12px;padding:13px;color:var(--text);font:13px/1.55 ui-monospace,Consolas,monospace;outline:none}.faction-horde textarea{background:#21131d;border-color:#78424b}textarea:focus{border-color:#78b7ff;box-shadow:0 0 0 3px #78b7ff1c}.faction-horde textarea:focus{border-color:#ff818b;box-shadow:0 0 0 3px #ff818b24}.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}.button{border:0;border-radius:10px;padding:11px 17px;font-weight:750;font-size:14px;cursor:pointer;background:linear-gradient(135deg,#f7d578,#dfa54e);color:#281b0b}.button.secondary{border:1px solid #394c69;background:#1a2740;color:#deebff}.button:hover{filter:brightness(1.08)}.smallnote{margin-left:auto;color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:#111a2b;border:1px solid var(--line);border-radius:13px;padding:14px 16px}.stat .label{font-size:12px;color:var(--muted)}.stat .value{font-size:24px;font-weight:800;margin-top:4px}.gold{color:var(--gold)}.results{margin-top:20px;padding:0;overflow:hidden}.result-head{padding:19px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px}.result-head h2{font-size:18px;margin:0}.result-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th,td{text-align:left;padding:12px 15px;border-bottom:1px solid #25324a}th{font-size:12px;color:#aebbd1;background:#10182a;position:sticky;top:0}td{font-size:14px}tbody tr:hover{background:#ffffff06}.item{font-weight:650}.minor{font-size:12px;color:var(--muted);margin-top:2px}.profit{font-weight:800;color:var(--green);white-space:nowrap}.direction{font-weight:700;white-space:nowrap}.alliance{color:var(--blue)}.horde{color:var(--red)}.none{color:#aab5c8}.empty{padding:34px;text-align:center;color:var(--muted)}.footer{color:var(--muted);font-size:12px;margin:16px 3px 0}.calc{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 18px}.calc .card{background:linear-gradient(135deg,#fff1b8,#f2ca62);border-color:#f8d977;color:#38270a;box-shadow:0 10px 30px #e8bd4c26}.calc h3{margin:0 0 12px;font-size:16px;color:#38270a}.calcrow{display:flex;gap:8px;align-items:center}.input-unit{position:relative;min-width:0;flex:1}.calc input{width:100%;border:1px solid #d5aa3f;background:#fff9e8;color:#38270a;padding:10px 36px 10px 12px;border-radius:9px}.calc input::placeholder{color:#9c8551}.unit-suffix{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#725a20;font-weight:800;pointer-events:none}.calc .button.secondary{background:#4b390e;border-color:#4b390e;color:#fff3c9}.calcout{margin-top:10px;color:#49370e;font-weight:700}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#243652;border:1px solid #496182;padding:9px 14px;border-radius:10px;display:none}
+    @media(max-width:720px){.wrap{padding:22px 14px 40px}.top{align-items:flex-start}.badge{display:none}.inputs,.calc{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.smallnote{width:100%;margin:0}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top"><div class="brand"><div class="logo">G</div><div><h1>拍賣套利分析器</h1><p class="sub">貼上聯盟與部落拍賣資料，快速比較稅後利潤。</p></div></div><div class="badge">離線使用 · 資料只留在這台裝置</div></header>
+  <section class="calc">
+    <div class="card"><h3>我買入</h3><div class="calcrow"><div class="input-unit"><input id="buy-price" type="number" min="0" step="any" placeholder="輸入買入價格"><span class="unit-suffix">G</span></div><button class="button secondary" id="buy-calc">計算</button></div><div class="calcout" id="buy-out">含稅成本：—</div></div>
+    <div class="card"><h3>我賣出</h3><div class="calcrow"><div class="input-unit"><input id="sell-price" type="number" min="0" step="any" placeholder="輸入賣出價格"><span class="unit-suffix">G</span></div><button class="button secondary" id="sell-calc">計算</button></div><div class="calcout" id="sell-out">扣稅實收：—</div></div>
+  </section>
+  <section class="card">
+    <div class="inputs">
+      <div class="faction faction-alliance"><div class="field-head"><label for="alliance">🔵 聯盟物品</label><span class="hint">一列一筆，保留來源排序</span></div><textarea id="alliance" placeholder="例如：61009989,\"附魔武器 - 鋼鐵之舞\"&#10;或：6100G - 附魔武器 - 鋼鐵之舞"></textarea></div>
+      <div class="faction faction-horde"><div class="field-head"><label for="horde">🔴 部落物品</label><span class="hint">依相同行數配對比較</span></div><textarea id="horde" placeholder="例如：51001234,\"附魔武器 - 鋼鐵之舞\"&#10;或：5100G - 附魔武器 - 鋼鐵之舞"></textarea></div>
+    </div>
+    <div class="actions"><button class="button" id="analyze">分析套利</button><button class="button secondary" id="clear">清除資料</button><button class="button secondary" id="export" disabled>匯出 CSV</button><span class="smallnote">規則：賣價 × 0.95 − 買價；最佳利潤低於 1G 顯示「無套利」。</span></div>
+  </section>
+  <section class="stats" aria-label="分析統計"><div class="stat"><div class="label">配對列數</div><div class="value" id="s-pairs">0</div></div><div class="stat"><div class="label">有套利機會</div><div class="value gold" id="s-opps">0</div></div><div class="stat"><div class="label">最高稅後利潤</div><div class="value" id="s-max">—</div></div><div class="stat"><div class="label">聯盟／部落資料列</div><div class="value" id="s-count">0 / 0</div></div></section>
+  <section class="card results"><div class="result-head"><div><h2>套利結果</h2><p>依最佳稅後利潤由高至低排列；價格按工作表邏輯取原始數字的 G 值。</p></div></div><div class="table-wrap"><table><thead><tr><th>商品</th><th>聯盟價格</th><th>部落價格</th><th>建議方向</th><th>稅後利潤</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="empty">貼上兩邊的拍賣資料後，按「分析套利」。</td></tr></tbody></table></div></section>
+  <p class="footer">若資料以 WoW 拍賣匯出格式提供（例如 61009989,"物品名稱"），程式會將最前面的整數視為銅幣並轉成金幣，與原表「去除末四位」的公式一致。每一列按原表位置配對。</p>
+</main><div class="toast" id="toast"></div>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id); let latest=[];
+  // Keep blank lines in place so rows still match by their original line number.
+  const lines=id=>{const rows=$(id).value.split(/\r?\n/).map(x=>x.trim());while(rows.length&&!rows[rows.length-1])rows.pop();return rows;};
+  function parseLine(line){
+    // Raw WoW export: copper integer, optionally followed by a quoted item name.
+    const raw=line.match(/^\s*(\d+)\s*,\s*(?:"((?:[^"]|"")*)"|([^,]*))/);
+    if(raw && Number(raw[1])>=10000){const item=(raw[2]??raw[3]??'').replace(/""/g,'"').trim();return {price:Math.floor(Number(raw[1])/10000),item:item||'未命名物品'};}
+    // Normalized workbook display, e.g. 6100G - item name.
+    const normalized=line.match(/^\s*([\d,]+(?:\.\d+)?)\s*G\s*[-–—]\s*(.*?)\s*$/i);
+    if(normalized)return {price:Number(normalized[1].replace(/,/g,'')),item:normalized[2]||'未命名物品'};
+    // Accept simple price, name rows (CSV/TSV), and a plain gold price.
+    const bits=line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(x=>x.trim().replace(/^"|"$/g,''));
+    if(bits.length>=2){const a=Number(bits[0].replace(/[,_\sG]/gi,''));const b=Number(bits[1].replace(/[,_\sG]/gi,''));if(Number.isFinite(a)&&a>0)return {price:a,item:bits.slice(1).join(' ').replace(/^"|"$/g,'')||'未命名物品'};if(Number.isFinite(b)&&b>0)return {price:b,item:bits[0]||'未命名物品'};}
+    const price=line.match(/[\d,]+(?:\.\d+)?/);if(price){const n=Number(price[0].replace(/,/g,''));if(n>0)return {price:n,item:line.replace(price[0],'').replace(/^[\s:G-]+|[\s:G-]+$/g,'')||'未命名物品'};}
+    return null;
+  }
+  function analyze(){
+    const a=lines('alliance').map(parseLine), h=lines('horde').map(parseLine), n=Math.max(a.length,h.length);const out=[];
+    for(let i=0;i<n;i++){const x=a[i],y=h[i];if(!x||!y)continue;
+      // Buying on Horde and selling on Alliance uses the Alliance sale price.
+      const allianceNet=x.price*.95-y.price, hordeNet=y.price*.95-x.price;
+      const best=Math.max(allianceNet,hordeNet);
+      const direction=best<1?'無套利':allianceNet>=hordeNet?'部落買 → 聯盟賣':'聯盟買 → 部落賣';
+      out.push({line:i+1,item:x.item||y.item,ap:x.price,hp:y.price,allianceSell:allianceNet,hordeSell:hordeNet,best,direction});
+    }
+    // Keep equal-profit rows in original source order.
+    latest=out.sort((u,v)=>v.best-u.best||u.line-v.line); render(latest,a.filter(Boolean).length,h.filter(Boolean).length,n);
+  }
+  function fmt(n){return Math.round(n).toLocaleString('zh-TW')+' G';}
+  function render(data,ac,hc,pairs){
+    $('s-pairs').textContent=pairs;$('s-count').textContent=`${ac} / ${hc}`;const opp=data.filter(x=>x.best>=1);$('s-opps').textContent=opp.length;$('s-max').textContent=opp.length?fmt(Math.max(...opp.map(x=>x.best))):'—';
+    $('export').disabled=!data.length;const body=$('rows');if(!data.length){body.innerHTML='<tr><td colspan="5" class="empty">沒有可配對的有效資料。請確認兩邊列數與格式，並檢查每列是否包含價格。</td></tr>';return;}
+    body.innerHTML=data.map(x=>`<tr><td><div class="item">${esc(x.item)}</div><div class="minor">來源列 ${x.line}</div></td><td>${fmt(x.ap)}</td><td>${fmt(x.hp)}</td><td class="direction ${x.direction==='無套利'?'none':x.direction.includes('聯盟賣')?'alliance':'horde'}">${esc(x.direction)}</td><td class="profit ${x.best<1?'none':''}">${x.best<1?'—':fmt(x.best)}</td></tr>`).join('');
+  }
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  $('analyze').addEventListener('click',analyze);$('clear').addEventListener('click',()=>{$('alliance').value='';$('horde').value='';latest=[];render([],0,0,0);$('rows').innerHTML='<tr><td colspan="5" class="empty">貼上兩邊的拍賣資料後，按「分析套利」。</td></tr>';});
+  $('buy-calc').addEventListener('click',()=>{const n=Number($('buy-price').value);$('buy-out').textContent=n>0?`5% 稅金：${fmt(n*.05)}　含稅成本：${fmt(n*1.05)}`:'請輸入大於 0 的價格。';});$('sell-calc').addEventListener('click',()=>{const n=Number($('sell-price').value);$('sell-out').textContent=n>0?`5% 稅金：${fmt(n*.05)}　扣稅實收：${fmt(n*.95)}`:'請輸入大於 0 的價格。';});
+  $('export').addEventListener('click',()=>{const csv=[['商品','聯盟價格(G)','部落價格(G)','聯盟賣出淨利(G)','部落賣出淨利(G)','最佳方向','最佳利潤(G)','來源列'],...latest.map(x=>[x.item,x.ap,x.hp,x.allianceSell.toFixed(2),x.hordeSell.toFixed(2),x.direction,x.best.toFixed(2),x.line])].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='MOP套利分析.csv';a.click();URL.revokeObjectURL(a.href);});
+})();
+</script>
+</body>
+</html>
