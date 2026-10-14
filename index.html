@@ -29,6 +29,8 @@
   <section class="stats" aria-label="分析統計"><div class="stat"><div class="label">配對列數</div><div class="value" id="s-pairs">0</div></div><div class="stat"><div class="label">有套利機會</div><div class="value gold" id="s-opps">0</div></div><div class="stat"><div class="label">最高稅後利潤</div><div class="value" id="s-max">—</div></div><div class="stat"><div class="label">聯盟／部落資料列</div><div class="value" id="s-count">0 / 0</div></div></section>
   <section class="card results"><div class="result-head"><div><h2>套利結果</h2><p>依最佳稅後利潤由高至低排列；價格按工作表邏輯取原始數字的 G 值。</p></div></div><div class="table-wrap"><table><thead><tr><th>商品</th><th>聯盟價格</th><th>部落價格</th><th>建議方向</th><th>稅後利潤</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="empty">貼上兩邊的拍賣資料後，按「分析套利」。</td></tr></tbody></table></div></section>
   <p class="footer">若資料以 WoW 拍賣匯出格式提供（例如 61009989,"物品名稱"），程式會將最前面的整數視為銅幣並轉成金幣，與原表「去除末四位」的公式一致。每一列按原表位置配對。</p>
+  <div style="margin-top:16px;text-align:center;padding:12px 16px;color:var(--muted);font-size:15px">累計造訪次數：<span class="counterapi" ns="wow-auction-arbitrage" action="view" key="homepage" noIcon="true" noCss="true" style="display:inline-block;min-width:2em;color:var(--gold);font-weight:800">載入中…</span></div>
+  <script src="https://counterapi.com/c.js" async></script>
 </main><div class="toast" id="toast"></div>
 <script>
 (()=>{
@@ -70,8 +72,3 @@
   $('analyze').addEventListener('click',analyze);$('clear').addEventListener('click',()=>{$('alliance').value='';$('horde').value='';latest=[];render([],0,0,0);$('rows').innerHTML='<tr><td colspan="5" class="empty">貼上兩邊的拍賣資料後，按「分析套利」。</td></tr>';});
   $('buy-calc').addEventListener('click',()=>{const n=Number($('buy-price').value);$('buy-out').textContent=n>0?`含稅成本：${fmt(n*1.05)}`:'請輸入大於 0 的價格。';});$('sell-calc').addEventListener('click',()=>{const n=Number($('sell-price').value);$('sell-out').textContent=n>0?`扣稅實收：${fmt(n*.95)}`:'請輸入大於 0 的價格。';});
   $('export').addEventListener('click',()=>{const csv=[['商品','聯盟價格(G)','部落價格(G)','聯盟賣出淨利(G)','部落賣出淨利(G)','最佳方向','最佳利潤(G)','來源列'],...latest.map(x=>[x.item,x.ap,x.hp,x.allianceSell.toFixed(2),x.hordeSell.toFixed(2),x.direction,x.best.toFixed(2),x.line])].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='MOP套利分析.csv';a.click();URL.revokeObjectURL(a.href);});
-  $('buy-price').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('buy-calc').click();}});$('sell-price').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('sell-calc').click();}});
-})();
-</script>
-</body>
-</html>
